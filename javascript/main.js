@@ -12,7 +12,6 @@ document.onkeydown = (e) => {
         let offset = noteTimes[0] - Date.now();
         if (offset > 200)
             return; // If there are no notes to hit, return
-        getId("offset").textContent = offset.toString();
         let rating = Math.abs(offset) <= 30 ? "Perfect!" : Math.abs(offset) <= 100 ? "Hit" : offset < 0 ? "Late" : "Early";
         getId("past-results").innerHTML = rating + " (" + offset.toString() + "ms)" + "<br/>" + getId("past-results").innerHTML;
         noteTimes.splice(0, 1); // Remove the note that was hit
