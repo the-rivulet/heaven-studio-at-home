@@ -1,0 +1,7 @@
+#kitties-container > img {
+  position: absolute;
+}
+
+#npcs-hit, #you-hit, #you-miss, #wa1, #wa2, #wa3 {
+  opacity: 0;
+}
