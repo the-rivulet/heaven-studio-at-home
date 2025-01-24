@@ -22,7 +22,8 @@ function hitNote(key: string, invert: boolean) {
   let rating = Math.abs(offset) <= 30 ? "Perfect!" : Math.abs(offset) <= 100 ? "Hit" : offset < 0 ? "Late" : "Early";
   getId("past-results").innerHTML = rating + " (" + offset.toString() + "ms)<br/>" + getId("past-results").innerHTML;
   note.onHit(Math.abs(offset) <= 100);
-  score += Math.abs(offset) <= 30 ? 10 : Math.abs(offset) <= 100 ? 10 - ((Math.abs(offset) - 30) / 14) : 0;
+  // Scoring: Perfect = 10, Hit = 7.5 ~ 10, Early/Late/Miss = 0
+  score += Math.abs(offset) <= 30 ? 10 : Math.abs(offset) <= 100 ? 10 - ((Math.abs(offset) - 30) / 20) : 0;
   noteTimes.splice(noteTimes.indexOf(note), 1); // Remove the note that was hit
 }
 
@@ -34,9 +35,9 @@ document.onkeyup = (e) => {
 }
 
 function hideKitties() {
-  getId("left").style.bottom = "-50px";
-  getId("middle").style.bottom = "-50px";
-  getId("right").style.bottom = "-50px";
+  getId("left").style.bottom = "-460px";
+  getId("middle").style.bottom = "-460px";
+  getId("right").style.bottom = "-460px";
   getId("bottom").style.bottom = "-250px";
   getId("topleft").style.top = "-175px"; getId("topleft").style.left = "-175px";
   getId("topright").style.top = "-175px"; getId("topright").style.right = "-175px";
@@ -56,7 +57,7 @@ function kittiesCloseUpClap(delay: number, keepKittiesShown = false) {
   setTimeout(() => {
     getId<HTMLImageElement>("topleft").src = "assets/nova-topleft-clap2.png";
     getId<HTMLImageElement>("topright").src = "assets/nova-topright-clap2.png";
-  }, delay * 10.5);
+  }, delay * 11);
   setTimeout(() => {
     getId<HTMLImageElement>("topleft").src = "assets/nova-topleft-clap1.png";
     getId<HTMLImageElement>("topright").src = "assets/nova-topright-clap1.png";
@@ -64,7 +65,7 @@ function kittiesCloseUpClap(delay: number, keepKittiesShown = false) {
   setTimeout(() => {
     getId<HTMLImageElement>("topleft").src = "assets/nova-topleft-clap2.png";
     getId<HTMLImageElement>("topright").src = "assets/nova-topright-clap2.png";
-  }, delay * 12.5);
+  }, delay * 13);
   setTimeout(() => {
     getId<HTMLImageElement>("topleft").src = "assets/nova-topleft.png";
     getId<HTMLImageElement>("topright").src = "assets/nova-topright.png";
@@ -74,7 +75,7 @@ function kittiesCloseUpClap(delay: number, keepKittiesShown = false) {
   for(let i of [10, 12]) {
     noteTimes.push({time: Date.now() + delay * i, key: "k", onHit(good) {
       getId<HTMLImageElement>("bottom").src = "assets/nova-bottom-" + (good ? "clap1.png" : "miss.png");
-      if(good) setTimeout(() => { getId<HTMLImageElement>("bottom").src = "assets/nova-bottom-clap2.png"; }, delay * 0.5);
+      if(good) setTimeout(() => { getId<HTMLImageElement>("bottom").src = "assets/nova-bottom-clap2.png"; }, delay);
       setTimeout(() => { getId<HTMLImageElement>("bottom").src = "assets/nova-bottom.png"; }, delay * 2);
     }});
   }
@@ -107,39 +108,67 @@ function kittiesClap(delay: number, keepKittiesShown = false) {
     getId<HTMLImageElement>("left").src = "assets/nova-left.png";
     getId<HTMLImageElement>("middle").src = "assets/nova-middle.png";
     if(!keepKittiesShown) hideKitties();
-  }, delay * 14);
+  }, delay * 16);
   // And add the notes...
   for(let i of [10, 12]) {
     noteTimes.push({time: Date.now() + delay * i, key: "k", onHit(good) {
-      getId<HTMLImageElement>("right").src = "assets/nova-right-" + (good ? "clap1.png" : "clap1.png");
+      getId<HTMLImageElement>("right").src = "assets/nova-right-" + (good ? "clap1.png" : "miss.png");
       if(good) setTimeout(() => { getId<HTMLImageElement>("right").src = "assets/nova-right-clap2.png"; }, delay);
       setTimeout(() => { getId<HTMLImageElement>("right").src = "assets/nova-right.png"; }, delay * 2);
     }});
   }
 }
 
-function kittiesSpin(delay: number) {
-  // ... TODO ...
+function kittiesSpin(delay: number, keepKittiesShown: boolean) {
+  // This will only work right after a "kittiesClap" (not CloseUp)
+  for(let time = 0; time < 4; time++) {
+    setTimeout(() => {
+      for(let i of ["left", "middle", "right"]) getId(i).style.height = "calc(1.2 * 647px)";
+    }, delay * 2 * time);
+    setTimeout(() => {
+      for(let i of ["left", "middle", "right"]) getId(i).style.height = "calc(1.3 * 647px)";
+    }, delay * (1 + 2 * time));
+  }
+  // Now do a BIG squish, then jump up!
+  setTimeout(() => {
+    for(let i of ["left", "middle"]) getId(i).style.height = "calc(0.65 * 647px)";
+  }, delay * 8);
+  noteTimes.push({time: Date.now() + delay * 8, key: "j", onHit(good) {
+    getId("right").style.height = "calc(" + (good ? 0.65 : 1.0) + " * 647px)";
+  },});
+  setTimeout(() => {
+    for(let i of ["left", "middle", "right"]) getId(i).style.height = "calc(1.3 * 647px)";
+    getId<HTMLImageElement>("left").src = "assets/nova-left-pose.png";
+    getId<HTMLImageElement>("middle").src = "assets/nova-middle-pose.png";
+  }, delay * 11);
+  noteTimes.push({time: Date.now() + delay * 11, key: "j", invert: true, onHit(good) {
+    getId<HTMLImageElement>("right").src = "assets/nova-right-pose" + (good ? ".png" : "-miss.png");
+    setTimeout(() => { getId<HTMLImageElement>("right").src = "assets/nova-right.png"; }, delay * 5);
+  },});
+  setTimeout(() => {
+    getId<HTMLImageElement>("left").src = "assets/nova-left.png";
+    getId<HTMLImageElement>("middle").src = "assets/nova-middle.png";
+    if(!keepKittiesShown) hideKitties();
+  }, delay * 16);
 }
+
+let slugkittiesBestScore = 0;
 
 function playSlugkitties(bpm: number) {
   let mspb = 60000 / bpm, delay = Math.round(mspb / 4), measure = Math.round(mspb * 4);
-  score = 0; let maxScore = 40;
-
+  score = 0; let maxScore = 300; // Each action is worth 20 points
+  for(let i of ["topleft", "topright", "bottom", "left", "middle", "right"]) getId(i).style.opacity = "1";
   getId("kitties-container").style.top = "0%";
   // Set up the initial kitties... be sure that  vvv  equals the scale factor in `style.css`
   for(let i of ["bottom", "left", "middle", "right"]) getId(i).style.left = "calc(50% - 0.5 * 1.3 * 1095px)";
   hideKitties();
 
-  setTimeout(kittiesClap, measure * 2, delay);
-  setTimeout(kittiesClap, measure * 3, delay);
-
-  /* setTimeout(kittiesClap, measure * 2, delay);
-  setTimeout(kittiesClap, measure * 3, delay);
+  setTimeout(kittiesCloseUpClap, measure * 2, delay);
+  setTimeout(kittiesCloseUpClap, measure * 3, delay);
   setTimeout(kittiesClap, measure * 4, delay);
   setTimeout(kittiesSpin, measure * 5, delay);
 
-  setTimeout(kittiesClap, measure * 6, delay);
+  setTimeout(kittiesCloseUpClap, measure * 6, delay);
   setTimeout(kittiesClap, measure * 7, delay);
   setTimeout(kittiesClap, measure * 8, delay);
   setTimeout(kittiesSpin, measure * 9, delay);
@@ -147,21 +176,25 @@ function playSlugkitties(bpm: number) {
   setTimeout(kittiesClap, measure * 10, delay);
   setTimeout(kittiesSpin, measure * 11, delay);
   setTimeout(kittiesClap, measure * 12, delay);
-  setTimeout(kittiesClap, measure * 13, delay);
+  setTimeout(kittiesCloseUpClap, measure * 13, delay);
 
   setTimeout(kittiesClap, measure * 14, delay);
   setTimeout(kittiesClap, measure * 15, delay);
-  setTimeout(kittiesClap, measure * 16, delay); */
+  setTimeout(kittiesClap, measure * 16, delay);
   // TODO: Fish
 
   let musicElement = getId("music") as HTMLMediaElement;
   setTimeout(() => {
     musicElement.pause(); musicElement.currentTime = 0;
     (getId("test-button") as HTMLButtonElement).disabled = false;
-    let pct = (100 * score/maxScore);
-    getId("past-results").innerHTML = "Your score was " + pct.toFixed(1) + "%. " + (pct >= 100 ? "perfect!! :0" : pct >= 80 ? "superb! :D" : pct >= 60 ? "ok :)" : "try again :(") + "<br/>" + getId("past-results").innerHTML;
+    let pct = 100 * score/maxScore;
+    if(pct > slugkittiesBestScore) slugkittiesBestScore = Math.floor(pct);
+    getId("past-results").innerHTML = "Your score was " + Math.floor(pct) + " (" + (pct >= 100 ? "PERFECT!! :0" : pct >= 80 ? "superb! :D" : pct >= 60 ? "ok" : "try again D:") + ")<br/>" + getId("past-results").innerHTML;
     getId("kitties-container").style.top = "-100%";
-  }, measure * 4);
+    getId("test-button").textContent = "Play slugkitties (Best: " + slugkittiesBestScore + "%)";
+    // Hide all the kitties
+    for(let i of ["topleft", "topright", "bottom", "left", "middle", "right"]) getId(i).style.opacity = "0";
+  }, measure * 18);
 }
 
 getId("test-button").textContent = "Play slugkitties";
