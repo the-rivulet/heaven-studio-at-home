@@ -1,4 +1,4 @@
-let getId = (x) => document.getElementById(x);
+let getId = function (x) { return document.getElementById(x); };
 ;
 let noteTimes = [];
 let score = 0;
@@ -29,97 +29,128 @@ document.onkeydown = (e) => {
 document.onkeyup = (e) => {
     hitNote(e.key, true);
 };
-function kittiesClap(delay) {
-    getId("wa1").style.opacity = "1";
+function hideKitties() {
+    getId("left").style.bottom = "-50px";
+    getId("middle").style.bottom = "-50px";
+    getId("right").style.bottom = "-50px";
+    getId("bottom").style.bottom = "-250px";
+    getId("topleft").style.top = "-175px";
+    getId("topleft").style.left = "-175px";
+    getId("topright").style.top = "-175px";
+    getId("topright").style.right = "-175px";
+}
+function kittiesCloseUpClap(delay, keepKittiesShown = false) {
+    hideKitties();
+    // Now show them again
+    getId("topleft").style.top = "0%";
+    getId("topleft").style.left = "0%";
+    setTimeout(() => { getId("topright").style.top = "0%"; getId("topright").style.right = "0%"; }, delay * 3);
+    setTimeout(() => { getId("bottom").style.bottom = "0%"; }, delay * 6);
+    // Now clap!
     setTimeout(() => {
-        getId("wa1").style.opacity = "0";
-        getId("wa2").style.opacity = "1";
-    }, delay * 3);
-    setTimeout(() => {
-        getId("wa2").style.opacity = "0";
-        getId("wa3").style.opacity = "1";
-    }, delay * 6);
-    noteTimes.push({ time: Date.now() + delay * 10, key: "k", onHit(good) {
-            let im = good ? "you-hit" : "you-miss";
-            getId(im).style.opacity = "1";
-        }, });
-    setTimeout(() => {
-        getId("wa3").style.opacity = "0";
-        getId("npcs-hit").style.opacity = "1";
+        getId("topleft").src = "assets/nova-topleft-clap1.png";
+        getId("topright").src = "assets/nova-topright-clap1.png";
     }, delay * 10);
     setTimeout(() => {
-        getId("npcs-hit").style.opacity = "0";
-        getId("you-hit").style.opacity = "0";
-        getId("you-miss").style.opacity = "0";
-    }, delay * 11);
-    noteTimes.push({ time: Date.now() + delay * 12, key: "k", onHit(good) {
-            let im = good ? "you-hit" : "you-miss";
-            getId(im).style.opacity = "1";
-        }, });
+        getId("topleft").src = "assets/nova-topleft-clap2.png";
+        getId("topright").src = "assets/nova-topright-clap2.png";
+    }, delay * 10.5);
     setTimeout(() => {
-        getId("npcs-hit").style.opacity = "1";
+        getId("topleft").src = "assets/nova-topleft-clap1.png";
+        getId("topright").src = "assets/nova-topright-clap1.png";
     }, delay * 12);
     setTimeout(() => {
-        getId("npcs-hit").style.opacity = "0";
-        getId("you-hit").style.opacity = "0";
-        getId("you-miss").style.opacity = "0";
-    }, delay * 14);
-}
-function kittiesSpin(delay) {
-    getId("wa3").style.opacity = "1";
-    setTimeout(() => { getId("wa3").style.opacity = "0"; }, delay);
-    setTimeout(() => { getId("wa3").style.opacity = "1"; }, delay * 2);
-    setTimeout(() => { getId("wa3").style.opacity = "0"; }, delay * 3);
-    setTimeout(() => { getId("wa3").style.opacity = "1"; }, delay * 4);
-    setTimeout(() => { getId("wa3").style.opacity = "0"; }, delay * 5);
-    setTimeout(() => { getId("wa3").style.opacity = "1"; }, delay * 6);
-    setTimeout(() => { getId("wa3").style.opacity = "0"; }, delay * 7);
-    noteTimes.push({ time: Date.now() + delay * 8, key: "j", onHit(good) {
-            if (good) {
-                getId("you").style.opacity = "0";
-                getId("you-squish").style.opacity = "1";
-            }
-            else
-                getId("you-miss").style.opacity = "1";
-        }, });
-    setTimeout(() => { getId("squish").style.opacity = "1"; }, delay * 8);
-    noteTimes.push({ time: Date.now() + delay * 11, key: "j", invert: true, onHit(good) {
-            getId("you-squish").style.opacity = "0";
-            if (!good)
-                getId("you-miss").style.opacity = "1";
-            else
-                getId("you").style.opacity = "1";
-        }, });
+        getId("topleft").src = "assets/nova-topleft-clap2.png";
+        getId("topright").src = "assets/nova-topright-clap2.png";
+    }, delay * 12.5);
     setTimeout(() => {
-        getId("squish").style.opacity = "0";
+        getId("topleft").src = "assets/nova-topleft.png";
+        getId("topright").src = "assets/nova-topright.png";
+        if (!keepKittiesShown)
+            hideKitties();
+    }, delay * 14);
+    // And add the notes...
+    for (let i of [10, 12]) {
+        noteTimes.push({ time: Date.now() + delay * i, key: "k", onHit(good) {
+                getId("bottom").src = "assets/nova-bottom-" + (good ? "clap1.png" : "miss.png");
+                if (good)
+                    setTimeout(() => { getId("bottom").src = "assets/nova-bottom-clap2.png"; }, delay * 0.5);
+                setTimeout(() => { getId("bottom").src = "assets/nova-bottom.png"; }, delay * 2);
+            } });
+    }
+}
+function kittiesClap(delay, keepKittiesShown = false) {
+    hideKitties();
+    // Now show them again
+    getId("left").style.bottom = "0%";
+    setTimeout(() => { getId("middle").style.bottom = "0%"; }, delay * 3);
+    setTimeout(() => { getId("right").style.bottom = "0%"; }, delay * 6);
+    // Now clap!
+    setTimeout(() => {
+        getId("left").src = "assets/nova-left-clap1.png";
+        getId("middle").src = "assets/nova-middle-clap1.png";
+    }, delay * 10);
+    setTimeout(() => {
+        getId("left").src = "assets/nova-left-clap2.png";
+        getId("middle").src = "assets/nova-middle-clap2.png";
     }, delay * 11);
     setTimeout(() => {
-        getId("you").style.opacity = "1";
-        getId("you-miss").style.opacity = "0";
-        getId("you-squish").style.opacity = "0";
+        getId("left").src = "assets/nova-left-clap1.png";
+        getId("middle").src = "assets/nova-middle-clap1.png";
+    }, delay * 12);
+    setTimeout(() => {
+        getId("left").src = "assets/nova-left-clap2.png";
+        getId("middle").src = "assets/nova-middle-clap2.png";
+    }, delay * 13);
+    setTimeout(() => {
+        getId("left").src = "assets/nova-left.png";
+        getId("middle").src = "assets/nova-middle.png";
+        if (!keepKittiesShown)
+            hideKitties();
     }, delay * 14);
+    // And add the notes...
+    for (let i of [10, 12]) {
+        noteTimes.push({ time: Date.now() + delay * i, key: "k", onHit(good) {
+                getId("right").src = "assets/nova-right-" + (good ? "clap1.png" : "clap1.png");
+                if (good)
+                    setTimeout(() => { getId("right").src = "assets/nova-right-clap2.png"; }, delay);
+                setTimeout(() => { getId("right").src = "assets/nova-right.png"; }, delay * 2);
+            } });
+    }
+}
+function kittiesSpin(delay) {
+    // ... TODO ...
 }
 function playSlugkitties(bpm) {
     let mspb = 60000 / bpm, delay = Math.round(mspb / 4), measure = Math.round(mspb * 4);
     score = 0;
-    let maxScore = 300;
+    let maxScore = 40;
+    getId("kitties-container").style.top = "0%";
+    // Set up the initial kitties... be sure that  vvv  equals the scale factor in `style.css`
+    for (let i of ["bottom", "left", "middle", "right"])
+        getId(i).style.left = "calc(50% - 0.5 * 1.3 * 1095px)";
+    hideKitties();
     setTimeout(kittiesClap, measure * 2, delay);
+    setTimeout(kittiesClap, measure * 3, delay);
+    /* setTimeout(kittiesClap, measure * 2, delay);
     setTimeout(kittiesClap, measure * 3, delay);
     setTimeout(kittiesClap, measure * 4, delay);
     setTimeout(kittiesSpin, measure * 5, delay);
+  
     setTimeout(kittiesClap, measure * 6, delay);
     setTimeout(kittiesClap, measure * 7, delay);
     setTimeout(kittiesClap, measure * 8, delay);
     setTimeout(kittiesSpin, measure * 9, delay);
+  
     setTimeout(kittiesClap, measure * 10, delay);
     setTimeout(kittiesSpin, measure * 11, delay);
     setTimeout(kittiesClap, measure * 12, delay);
     setTimeout(kittiesClap, measure * 13, delay);
+  
     setTimeout(kittiesClap, measure * 14, delay);
     setTimeout(kittiesClap, measure * 15, delay);
-    setTimeout(kittiesClap, measure * 16, delay);
+    setTimeout(kittiesClap, measure * 16, delay); */
     // TODO: Fish
-    // Stop audio
     let musicElement = getId("music");
     setTimeout(() => {
         musicElement.pause();
@@ -127,7 +158,8 @@ function playSlugkitties(bpm) {
         getId("test-button").disabled = false;
         let pct = (100 * score / maxScore);
         getId("past-results").innerHTML = "Your score was " + pct.toFixed(1) + "%. " + (pct >= 100 ? "perfect!! :0" : pct >= 80 ? "superb! :D" : pct >= 60 ? "ok :)" : "try again :(") + "<br/>" + getId("past-results").innerHTML;
-    }, measure * 17.8);
+        getId("kitties-container").style.top = "-100%";
+    }, measure * 4);
 }
 getId("test-button").textContent = "Play slugkitties";
 let played = false;
