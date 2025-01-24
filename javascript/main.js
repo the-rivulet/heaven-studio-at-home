@@ -147,14 +147,14 @@ function kittiesSpin(delay, keepKittiesShown) {
     }, delay * 11);
     noteTimes.push({ time: Date.now() + delay * 11, key: "j", invert: true, onHit(good) {
             getId("right").src = "assets/nova-right-pose" + (good ? ".png" : "-miss.png");
-            setTimeout(() => { getId("right").src = "assets/nova-right.png"; }, delay * 5);
+            setTimeout(() => { getId("right").src = "assets/nova-right.png"; }, delay * 3);
         }, });
     setTimeout(() => {
         getId("left").src = "assets/nova-left.png";
         getId("middle").src = "assets/nova-middle.png";
         if (!keepKittiesShown)
             hideKitties();
-    }, delay * 16);
+    }, delay * 14);
 }
 let slugkittiesBestScore = 0;
 function playSlugkitties(bpm) {
@@ -170,13 +170,13 @@ function playSlugkitties(bpm) {
     hideKitties();
     setTimeout(kittiesCloseUpClap, measure * 2, delay);
     setTimeout(kittiesCloseUpClap, measure * 3, delay);
-    setTimeout(kittiesClap, measure * 4, delay);
+    setTimeout(kittiesClap, measure * 4, delay, true);
     setTimeout(kittiesSpin, measure * 5, delay);
     setTimeout(kittiesCloseUpClap, measure * 6, delay);
     setTimeout(kittiesClap, measure * 7, delay);
-    setTimeout(kittiesClap, measure * 8, delay);
+    setTimeout(kittiesClap, measure * 8, delay, true);
     setTimeout(kittiesSpin, measure * 9, delay);
-    setTimeout(kittiesClap, measure * 10, delay);
+    setTimeout(kittiesClap, measure * 10, delay, true);
     setTimeout(kittiesSpin, measure * 11, delay);
     setTimeout(kittiesClap, measure * 12, delay);
     setTimeout(kittiesCloseUpClap, measure * 13, delay);
