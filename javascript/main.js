@@ -13,14 +13,14 @@ function checkMisses() {
 function hitNote(key = "", invert = false) {
     var _a;
     if (!noteTimes.length)
-        return; // If there are no notes at all, return
+        return false; // If there are no notes at all, return
     noteTimes.sort((a, b) => a.time - b.time); // Sort the notes
     checkMisses();
     // if no key was given, then look for any key
     let note = noteTimes.find(x => ((x.invert ? invert : !invert) && (key ? (key == x.key) : true)));
     let offset = note.time - Date.now();
     if (offset > 200)
-        return; // If there are no notes to hit, return
+        return false; // If there are no notes to hit, return
     let good = Math.abs(offset) <= 100, perfect = Math.abs(offset) <= 30;
     if (!good)
         missed = true;
@@ -37,6 +37,7 @@ function hitNote(key = "", invert = false) {
     getId("marker").appendChild(el);
     setTimeout(() => { el.style.opacity = "0"; }, 10);
     noteTimes.splice(noteTimes.indexOf(note), 1); // Remove the note that was hit
+    return true;
 }
 document.onkeydown = (e) => {
     hitNote(e.key, false);
@@ -45,10 +46,12 @@ document.onkeyup = (e) => {
     hitNote(e.key, true);
 };
 document.onmousedown = (e) => {
-    hitNote("", false);
+    if (hitNote("", false))
+        e.preventDefault();
 };
 document.onmouseup = (e) => {
-    hitNote("", true);
+    if (hitNote("", true))
+        e.preventDefault();
 };
 function hideKitties() {
     getId("left").style.bottom = "-460px";
@@ -202,21 +205,40 @@ function kittiesFish(delay, keepKittiesShown = false) {
             hideKitties();
     }, delay * 14);
 }
-let slugkittiesBestScore = 0;
+let bestScores = {}, songsPlayed = [];
+function setUp() {
+    getId("song-container").style.top = "0%";
+    getId("marker").style.opacity = "0.5";
+    // Set up the initial kitties
+    for (let i of ["topleft", "topright", "bottom", "left", "middle", "right", "fish"])
+        getId(i).style.display = "block";
+    for (let i of ["bottom", "left", "middle", "right", "fish"])
+        getId(i).style.left = "calc(50% - " + (IMSIZE / 2) + " * 1095px)";
+    hideKitties();
+}
+function cleanUp(songID, maxScore) {
+    let musicElement = getId("mus-" + songID);
+    musicElement.pause();
+    musicElement.currentTime = 0;
+    getId(songID + "-button").disabled = false;
+    let pct = 100 * score / maxScore;
+    if ((pct > bestScores[songID]) || !(bestScores[songID]))
+        bestScores[songID] = Math.floor(pct);
+    getId("past-results").innerHTML = "Your score was " + Math.floor(pct) + " (" + (pct >= 100 ? "perfect!! :0" : pct >= 80 ? "superb! :D" : pct >= 60 ? "ok" : "try again D:") + ")" + (missed ? "" : ". and you didn't miss at all!") + "<br/>" + getId("past-results").innerHTML;
+    getId("song-container").style.top = "-100%";
+    getId(songID + "-button").textContent = "Play " + songID + " (Best: " + bestScores[songID] + ")";
+    // Hide all the kitties
+    for (let i of ["topleft", "topright", "bottom", "left", "middle", "right", "fish"])
+        getId(i).style.display = "none";
+    getId("marker").style.opacity = "0";
+    getId("marker").innerHTML = "| &nbsp; |"; // Clear out all the note elements
+}
 function playSlugkitties(bpm) {
     let mspb = 60000 / bpm, delay = Math.round(mspb / 4), measure = Math.round(mspb * 4);
     let extraOffset = 250; // Adjust this if everything is wrong
     score = 0;
     missed = false;
-    let maxScore = 760; // Each action is worth 20 points
-    for (let i of ["topleft", "topright", "bottom", "left", "middle", "right", "fish"])
-        getId(i).style.display = "block";
-    getId("kitties-container").style.top = "0%";
-    getId("marker").style.opacity = "0.5";
-    // Set up the initial kitties
-    for (let i of ["bottom", "left", "middle", "right", "fish"])
-        getId(i).style.left = "calc(50% - " + (IMSIZE / 2) + " * 1095px)";
-    hideKitties();
+    setUp();
     // Use setInterval here as it's probably less likely to get offbeat
     let m = 0, q, nextAction = function () {
         m++;
@@ -296,44 +318,121 @@ function playSlugkitties(bpm) {
             setTimeout(kittiesClap, measure * 1.5, delay);
             setTimeout(kittiesCloseUpClap, measure * 2.5, delay);
         }
-        else
+        else if (m > 36)
             clearInterval(q);
     };
     setTimeout(() => {
         q = setInterval(nextAction, measure);
     }, extraOffset);
-    let musicElement = getId("music");
     setTimeout(() => {
-        musicElement.pause();
-        musicElement.currentTime = 0;
-        getId("test-button").disabled = false;
-        let pct = 100 * score / maxScore;
-        if (pct > slugkittiesBestScore)
-            slugkittiesBestScore = Math.floor(pct);
-        getId("past-results").innerHTML = "Your score was " + Math.floor(pct) + " (" + (pct >= 100 ? "perfect!! :0" : pct >= 80 ? "superb! :D" : pct >= 60 ? "ok" : "try again D:") + ")" + (missed ? "" : ". and you didn't miss at all!") + "<br/>" + getId("past-results").innerHTML;
-        getId("kitties-container").style.top = "-100%";
-        getId("test-button").textContent = "Play slugkitties (Best: " + slugkittiesBestScore + ")";
-        // Hide all the kitties
-        for (let i of ["topleft", "topright", "bottom", "left", "middle", "right", "fish"])
-            getId(i).style.display = "none";
-        getId("marker").style.opacity = "0";
-        getId("marker").innerHTML = "| &nbsp; |"; // Clear out all the note elements
+        cleanUp("slugkitties", 760);
     }, measure * 40);
 }
-getId("test-button").textContent = "Play slugkitties";
-let played = false;
-getId("test-button").onclick = (e) => {
+function playFurretWalk(bpm) {
+    let mspb = 60000 / bpm, delay = Math.round(mspb / 4), measure = Math.round(mspb * 4);
+    let extraOffset = 250; // Adjust this if everything is wrong
+    score = 0;
+    missed = false;
+    setUp();
+    // Use setInterval here as it's probably less likely to get offbeat
+    let m = 0, q, nextAction = function () {
+        m++;
+        if (m < 2)
+            return;
+        /* */ if (m == 2)
+            kittiesCloseUpClap(delay);
+        else if (m == 3)
+            kittiesCloseUpClap(delay);
+        else if (m == 4)
+            kittiesClap(delay, true);
+        else if (m == 5)
+            kittiesSpin(delay, true);
+        else if (m == 6)
+            kittiesSpin(delay);
+        else if (m == 7)
+            kittiesClap(delay, true);
+        else if (m == 8)
+            kittiesSpin(delay * 2, true);
+        else if (m == 10)
+            kittiesSpin(delay * 2, true);
+        else if (m == 12)
+            kittiesSpin(delay * 2, true);
+        else if (m == 14)
+            kittiesSpin(delay, true);
+        else if (m == 15)
+            kittiesFish(delay);
+        else if (m == 16)
+            kittiesCloseUpClap(delay);
+        else if (m == 17)
+            kittiesCloseUpClap(delay);
+        else if (m == 18)
+            kittiesClap(delay, true);
+        else if (m == 19)
+            kittiesSpin(delay);
+        else if (m == 20)
+            kittiesClap(delay, true);
+        else if (m == 21)
+            kittiesSpin(delay, true);
+        else if (m == 22)
+            kittiesSpin(delay);
+        else if (m == 23)
+            kittiesClap(delay, true);
+        else if (m == 24)
+            kittiesSpin(delay * 2, true);
+        else if (m == 26)
+            kittiesSpin(delay * 2, true);
+        else if (m == 28)
+            kittiesSpin(delay * 2, true);
+        else if (m == 30)
+            kittiesSpin(delay, true);
+        else if (m == 31)
+            kittiesFish(delay);
+        else if (m == 32)
+            kittiesCloseUpClap(delay);
+        else if (m == 33)
+            kittiesCloseUpClap(delay);
+        else if (m == 34)
+            kittiesClap(delay);
+        else if (m > 34)
+            clearInterval(q);
+    };
+    setTimeout(() => {
+        q = setInterval(nextAction, measure);
+    }, extraOffset);
+    setTimeout(() => {
+        cleanUp("furretwalk", 540);
+    }, measure * 35);
+}
+getId("slugkitties-button").textContent = "Play slugkitties";
+getId("slugkitties-button").onclick = (e) => {
     // Start audio
-    let musicElement = getId("music");
-    if (!played) {
+    let musicElement = getId("mus-slugkitties");
+    alert(musicElement);
+    if (!songsPlayed.includes("slugkitties")) {
+        let musicContext = new AudioContext();
+        alert(musicContext);
+        let musicTrack = musicContext.createMediaElementSource(musicElement);
+        musicTrack.connect(musicContext.destination);
+        songsPlayed.push("slugkitties");
+    }
+    musicElement.play();
+    getId("slugkitties-button").textContent = "Playing slugkitties";
+    getId("slugkitties-button").disabled = true;
+    playSlugkitties(136);
+};
+getId("furretwalk-button").textContent = "Play furretwalk";
+getId("furretwalk-button").onclick = (e) => {
+    // Start audio
+    let musicElement = getId("mus-furretwalk");
+    if (!songsPlayed.includes("furretwalk")) {
         let musicContext = new AudioContext();
         let musicTrack = musicContext.createMediaElementSource(musicElement);
         musicTrack.connect(musicContext.destination);
-        played = true;
+        songsPlayed.push("furretwalk");
     }
     musicElement.play();
-    getId("test-button").textContent = "Playing slugkitties";
-    getId("test-button").disabled = true;
+    getId("furretwalk-button").textContent = "Playing furretwalk";
+    getId("furretwalk-button").disabled = true;
     // Set up slugkitties
-    playSlugkitties(136);
+    playFurretWalk(112);
 };

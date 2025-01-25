@@ -1,4 +1,4 @@
-#kitties-container {
+#song-container {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -8,7 +8,7 @@
   transition: 1s;
 }
 
-#kitties-container > img {
+#song-container > img {
   position: absolute;
   background: transparent;
   height: calc(1.1 * 647px); /* Make it a little bigger... */
