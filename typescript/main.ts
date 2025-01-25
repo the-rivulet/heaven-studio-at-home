@@ -335,10 +335,8 @@ getId("slugkitties-button").textContent = "Play slugkitties";
 getId("slugkitties-button").onclick = (e) => {
   // Start audio
   let musicElement = getId<HTMLAudioElement>("mus-slugkitties");
-  alert(musicElement);
   if(!songsPlayed.includes("slugkitties")) {
     let musicContext = new AudioContext();
-    alert(musicContext);
     let musicTrack = musicContext.createMediaElementSource(musicElement);
     musicTrack.connect(musicContext.destination);
     songsPlayed.push("slugkitties");
