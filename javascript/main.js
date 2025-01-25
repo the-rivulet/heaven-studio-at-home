@@ -10,13 +10,14 @@ function checkMisses() {
         noteTimes.splice(0, 1);
     }
 }
-function hitNote(key, invert) {
+function hitNote(key = "", invert = false) {
     var _a;
     if (!noteTimes.length)
         return; // If there are no notes at all, return
     noteTimes.sort((a, b) => a.time - b.time); // Sort the notes
     checkMisses();
-    let note = noteTimes.find(x => (invert ? x.invert : !x.invert) && x.key == key);
+    // if no key was given, then look for any key
+    let note = noteTimes.find(x => ((x.invert ? invert : !invert) && (key ? (key == x.key) : true)));
     let offset = note.time - Date.now();
     if (offset > 200)
         return; // If there are no notes to hit, return
@@ -42,6 +43,12 @@ document.onkeydown = (e) => {
 };
 document.onkeyup = (e) => {
     hitNote(e.key, true);
+};
+document.onmousedown = (e) => {
+    hitNote("", false);
+};
+document.onmouseup = (e) => {
+    hitNote("", true);
 };
 function hideKitties() {
     getId("left").style.bottom = "-460px";
