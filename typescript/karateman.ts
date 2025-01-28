@@ -29,30 +29,30 @@ export async function karateHit(delay: number, rockType = 1, extraWait = 0) {
   let rock: HTMLImageElement;
   let rockHit = false;
   noteTimes.push({time: Date.now() + delay * 8 + extraWait, key: "k", onHit(good) {
-    km.src = "assets/arti-punch" + (good ? ".png" : "-miss.png");
+    km.src = "assets/karateman/punch" + (good ? ".png" : "-miss.png");
     if(good) {
       if(rockType <= 4) {
         rockHit = true;
         rock.style.left = "3000px"; // Get rid of it quickly
       }
     }
-    setTimeout(() => { km.src = "assets/arti.png"; }, 200);
+    setTimeout(() => { km.src = "assets/karateman/idle.png"; }, 200);
   }});
   await sleep(extraWait).then(() => {
     // Create a rock
     rock = document.createElement("img");
-    rock.src = (rockType == 0 ? "assets/lantern.png" : rockType > 4 ? "assets/bomb.png" : "assets/rock" + rockType + ".png");
+    rock.src = "assets/karateman/" + (rockType == 0 ? "lantern.png" : rockType > 4 ? "bomb.png" : "rock" + rockType + ".png");
     getId("song-container").appendChild(rock);
     rock.style.display = "block";
     rock.style.transition = (delay * 8/1000 + 0.1) + "s cubic-bezier(.2, 0.01, .4, 1.35)";
-    rock.style.bottom = "-450px";
+    rock.style.bottom = "-400px";
     rock.style.left = "0px";
     setTimeout(() => {
       rock.style.bottom = "-10px";
     }, 20);
   })
   .then(() => sleep(delay * 8 + 100)).then(() => {
-    if(!rockHit) rock.style.bottom = "-450px";
+    if(!rockHit) rock.style.bottom = "-400px";
   });
   setTimeout(() => { rock.remove(); }, delay * 16);
   return rock; // this will be useful for later
@@ -65,7 +65,7 @@ export async function karateDoubleHit(delay: number, rockTypeA = 1, rockTypeB = 
 
 export function karateMultiHit(delay: number, num: number, extraWait = 0) {
   let mh = getId<HTMLImageElement>("multihit");
-  mh.src = "assets/hit" + num + ".png";
+  mh.src = "assets/karateman/hit" + num + ".png";
   mh.style.top = "-50px";
   karateHit(delay, 1, extraWait);
   for(let i = 2; i <= 4; i++) {
@@ -81,13 +81,13 @@ export function karatePunchKick(delay: number, extraWait = 0) {
   // ... then add a extra note to it
   let km = getId<HTMLImageElement>("arti");
   noteTimes.push({time: Date.now() + delay * 13 + extraWait, key: "k", invert: true, onHit(good) {
-    km.src = "assets/arti-kick" + (good ? ".png" : "-miss.png");
+    km.src = "assets/karateman/kick" + (good ? ".png" : "-miss.png");
     hit.then(rock => {
       if(good) {
         rock.style.left = "3000px";
         rock.style.bottom = "-10px"; // don't fall
       }
     });
-    setTimeout(() => { km.src = "assets/arti.png"; }, 200);
+    setTimeout(() => { km.src = "assets/karateman/idle.png"; }, 200);
   }});
 }

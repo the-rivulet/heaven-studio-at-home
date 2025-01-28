@@ -18,7 +18,7 @@ function hitNote(key = "", invert = false) {
   checkMisses();
   // if no key was given, then look for any key
   let note = noteTimes.find(x => ((x.invert ? invert : !invert) && (key ? (key == x.key) : true)));
-  let offset = note.time - Date.now();
+  let offset = note.time - Date.now() + (parseFloat(getId<HTMLInputElement>("offset").value) || 0);
   if(offset > 200) return false; // If there are no notes to hit, return
   let good = Math.abs(offset) <= 100, perfect = Math.abs(offset) <= 30;
   if(!good) missed = true;
@@ -69,20 +69,21 @@ function cleanUp(songID: string, maxScore: number) {
   for(let i of [r, s, rr]) i.style.display = "none";
   r.textContent =
     pct >= 101 ? "I think I miscalculated something, pretty sure you're not supposed to have " + Math.floor(pct) + " points" :
-    pct >= 100 ? "wow..." :
+    pct >= 100 ? "wow" :
+    pct >= 99 ? "almost!!" :
     pct >= 98 ? "oh, that was so close... you'll get it next time!" :
-    pct >= 95 ? "go for a perfect next time, I believe in you!" :
+    pct >= 95 ? "amazing! go for a perfect, I believe in you" :
     pct >= 90 ? "woah, very nice!" :
     pct >= 80 ? "awesome!" :
-    pct >= 78 ? "oh I wish I could give you a better rank but..." :
-    pct >= 77 ? "77 is a lucky number. fortune is smiling upon you!" :
+    pct >= 78 ? "superb, almost..." :
+    pct >= 77 ? "what a lucky number. fortune smiles upon you, good luck!" :
     pct >= 70 ? "you made it!" :
     pct >= 63 ? "not bad." :
     pct >= 60 ? "really cutting it close huh?" :
     pct >= 55 ? "sorry to bring you such bad news, but..." :
     pct >= 50 ? "awh, if only you had hit a few more..." :
     pct >= 30 ? "maybe next time..." :
-    pct >= 1 ? "at least you hit one." : "*disappointed stare*";
+    pct >= 1 ? "at least you hit one" : "";
   setTimeout(() => { r.style.display = "block"; }, 2000);
   setTimeout(() => {
     // show the score
@@ -98,9 +99,9 @@ function cleanUp(songID: string, maxScore: number) {
   }, 4000);
   setTimeout(() => {
     rr.style.display = "block";
-    rr.textContent = pct >= 100 ? "Perfect!" : pct >= 80 ? "superb!" : pct >= 60 ? "ok": "try again :(";
-    rr.style.color = pct >= 100 ? "magenta" : pct >= 80 ? "red" : pct >= 60 ? "lime": "cyan";
-    if(missed == false) rr.innerHTML += " <span style='color:yellow'>no miss!</span>";
+    rr.innerHTML = "<img src='assets/ranks/" + (pct >= 100 ? "perfect" : pct >= 80 ? "superb" : pct >= 60 ? "ok": "tryagain") + ".png'>";
+    //rr.style.color = pct >= 100 ? "magenta" : pct >= 80 ? "red" : pct >= 60 ? "lime": "cyan";
+    if(missed == false) rr.innerHTML += " <img src='assets/ranks/nomiss.png'>";
   }, 10000);
   setTimeout(() => { getId("results-container").style.top = "-100%"; }, 12000);
   // Cleanup
@@ -133,70 +134,54 @@ function playSong(songID: string, cues: ((d: number) => void)[], extraOffset: nu
 function playSlugkitties() {
   playSong("slugkitties", [
     doNothing,
-    d => kittiesCloseUpClap(d),
-    d => kittiesCloseUpClap(d),
+    kittiesCloseUpClap,
+    kittiesCloseUpClap,
     d => kittiesClap(d, true),
     d => kittiesSpin(d),
+    kittiesCloseUpClap,
+    kittiesClap,
+    d => kittiesClap(d, true),
+    kittiesSpin,
+    d => kittiesClap(d, true),
+    kittiesSpin,
+    kittiesClap,
     d => kittiesCloseUpClap(d),
-    d => kittiesClap(d),
+    kittiesClap,
+    kittiesClap,
     d => kittiesClap(d, true),
-    d => kittiesSpin(d),
-    d => kittiesClap(d, true),
-    d => kittiesSpin(d),
-    d => kittiesClap(d),
-    d => kittiesCloseUpClap(d),
-    d => kittiesClap(d),
-    d => kittiesClap(d),
-    d => kittiesClap(d, true),
-    d => kittiesFish(d),
+    kittiesFish,
     d => kittiesClap(d, true),
     d => kittiesSpin(d, true),
-    d => kittiesSpin(d),
+    kittiesSpin,
     d => kittiesClap(d, true),
     d => kittiesSpin(d, true),
     d => kittiesSpin(d, true),
-    d => kittiesSpin(d),
+    kittiesSpin,
     d => kittiesCloseUpClap(d),
-    d => kittiesClap(d),
+    kittiesClap,
     d => kittiesClap(d, true),
-    d => kittiesFish(d),
+    kittiesFish,
     d => kittiesClap(d, true),
-    d => kittiesSpin(d),
+    kittiesSpin,
     d => kittiesClap(d, true),
-    d => kittiesSpin(d),
-    d => kittiesClap(d),
-    d => kittiesClap(d),
+    kittiesSpin,
+    kittiesClap,
+    kittiesClap,
     d => kittiesClap(d, true),
-    d => kittiesFish(d),
+    kittiesFish,
     d => kittiesClap(d, false, d * 8),       // wait a half measure here...
     d => kittiesCloseUpClap(d, false, d * 8) // and here
-  ], 250, 136, 40, 760);
+  ], 170, 136, 40, 760);
 }
 
 function playFurretWalk() {
   playSong("furretwalk", [
     doNothing,
-    d => kittiesCloseUpClap(d),
-    d => kittiesCloseUpClap(d),
+    kittiesCloseUpClap,
+    kittiesCloseUpClap,
     d => kittiesClap(d, true),
     d => kittiesSpin(d, true),
-    d => kittiesSpin(d),
-    d => kittiesClap(d, true),
-    d => kittiesSpin(d*2, true),
-    doNothing,
-    d => kittiesSpin(d*2, true),
-    doNothing,
-    d => kittiesSpin(d*2, true),
-    doNothing,
-    d => kittiesSpin(d, true),
-    d => kittiesFish(d),
-    d => kittiesCloseUpClap(d),
-    d => kittiesCloseUpClap(d),
-    d => kittiesClap(d, true),
-    d => kittiesSpin(d),
-    d => kittiesClap(d, true),
-    d => kittiesSpin(d, true),
-    d => kittiesSpin(d),
+    kittiesSpin,
     d => kittiesClap(d, true),
     d => kittiesSpin(d*2, true),
     doNothing,
@@ -205,74 +190,96 @@ function playFurretWalk() {
     d => kittiesSpin(d*2, true),
     doNothing,
     d => kittiesSpin(d, true),
-    d => kittiesFish(d),
-    d => kittiesCloseUpClap(d),
-    d => kittiesCloseUpClap(d),
-    d => kittiesClap(d)
+    kittiesFish,
+    kittiesCloseUpClap,
+    kittiesCloseUpClap,
+    d => kittiesClap(d, true),
+    kittiesSpin,
+    d => kittiesClap(d, true),
+    d => kittiesSpin(d, true),
+    kittiesSpin,
+    d => kittiesClap(d, true),
+    d => kittiesSpin(d*2, true),
+    doNothing,
+    d => kittiesSpin(d*2, true),
+    doNothing,
+    d => kittiesSpin(d*2, true),
+    doNothing,
+    d => kittiesSpin(d, true),
+    kittiesFish,
+    kittiesCloseUpClap,
+    kittiesCloseUpClap,
+    kittiesClap
   ], 250, 112, 35, 540);
 }
 
 function playKarateMan() {
   playSong("karateman", [
-    d => { setBounceInterval(15000/256); setTimeout(() => { showKarateMan(); }, 90); },
+    d => {
+      setBounceInterval(15000/256);
+      setTimeout(() => { showKarateMan(); }, 150);
+      setTimeout(() => { getId<HTMLImageElement>("arti").src = "assets/karateman/uppercut.png"; }, 1700);
+      setTimeout(() => { getId<HTMLImageElement>("arti").src = "assets/karateman/idle.png"; }, 2500);
+    },
     doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing,
-    d => karatePunchKick(d),
+    karatePunchKick,
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+    karateHit, karateHit, karateHit, karateHit, karateHit,
     d => karateHit(d, 0),
-    d => karatePunchKick(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
-    d => karatePunchKick(d),
+    karatePunchKick,
+    karateHit, karateHit, karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
-    d => karatePunchKick(d),
+    karateHit, karateHit, karateHit, karateHit, karateHit,
+    karateHit, karateHit, karateHit, karateHit, karateHit,
+    karateHit, karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d),d => karateHit(d, 0),
-    d => karatePunchKick(d),
+    karateHit, karateHit, karateHit, karateHit, karateHit,
+    karateHit, karateHit, karateHit, karateHit, karateHit,
+    karateHit, karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d, 1, d*3), d => karateHit(d, 1, d*3), d => karateHit(d, 1, d*3),
-    d => karateHit(d),
+    karateHit, karateHit, karateHit, karateHit, karateHit,
+    karateHit, d => karateHit(d, 1, d*3), d => karateHit(d, 1, d*3), d => karateHit(d, 1, d*3), karateHit,
+    karateHit,
     d => karateMultiHit(d, 3), // Hit 3!
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),d => karateHit(d, 0),
-    d => karatePunchKick(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+    karateHit, karateHit, karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
+    doNothing,
+    karateHit, karateHit, d => karateHit(d),
     d => karateMultiHit(d, 3), // Hit 3!
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+    karateHit, karateHit, karateHit, karateHit, karateHit,
+    karateHit, karateHit, karateHit, karateHit, karateHit,
     d => karateMultiHit(d, 3), // Hit 3!
     doNothing,
-    d => karateHit(d), d => karateHit(d),
+    karateHit, d => karateHit(d),
     d => karateMultiHit(d, 3), // Hit 3!
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
-    d => karatePunchKick(d),
+    karateHit, karateHit, karateHit, karateHit, karateHit,
+    karateHit, karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
     doNothing,
-    d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
-    d => karatePunchKick(d),
+    karateHit, karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
     doNothing,
     d => karateHit(d), d => karateHit(d, 0),
-    d => karatePunchKick(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
-    d => karatePunchKick(d),
-    d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
-    d => karatePunchKick(d),
+    karatePunchKick,
+    karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
+    karateHit, karateHit, d => karateHit(d, 0),
+    karatePunchKick,
     d => karateHit(d, 0),
-    d => karatePunchKick(d),
+    karatePunchKick,
     doNothing,
-    d => karatePunchKick(d),
+    karatePunchKick,
     doNothing,
     doNothing,
     doNothing,
     d => karateHit(d, 1, d * 8),
-  ], 65, 256, 140, 1320);
+  ], 0, 256, 140, 1320);
 }
 
 function buttonSetup(id: string, fn: () => void) {
