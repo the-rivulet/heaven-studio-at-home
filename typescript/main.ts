@@ -66,25 +66,26 @@ function cleanUp(songID: string, maxScore: number) {
   getId("past-results").innerHTML = "Your score was " + Math.floor(pct) + " (" + (pct >= 100 ? "perfect!! :0" : pct >= 80 ? "superb! :D" : pct >= 60 ? "ok" : "try again D:") + ")" + (missed ? "" : ". and you didn't miss at all!") + "<br/>" + getId("past-results").innerHTML;
   getId("results-container").style.top = "0%";
   let r = getId("results"), s = getId("scoring"), ss = getId("score"), rr = getId("rank");
-  for(let i of [r, s]) i.style.display = "none";
+  for(let i of [r, s, rr]) i.style.display = "none";
   r.textContent =
     pct >= 101 ? "I think I miscalculated something, pretty sure you're not supposed to have " + Math.floor(pct) + " points" :
-    pct >= 100 ? "wow" :
+    pct >= 100 ? "wow..." :
     pct >= 98 ? "oh, that was so close... you'll get it next time!" :
-    pct >= 95 ? "go for a perfect next time! I believe in you" :
+    pct >= 95 ? "go for a perfect next time, I believe in you!" :
     pct >= 90 ? "woah, very nice!" :
-    pct >= 80 ? "awesome" :
+    pct >= 80 ? "awesome!" :
     pct >= 78 ? "oh I wish I could give you a better rank but..." :
-    pct >= 77 ? "77 is a lucky number. fortune is smiling upon you" :
+    pct >= 77 ? "77 is a lucky number. fortune is smiling upon you!" :
     pct >= 70 ? "you made it!" :
-    pct >= 63 ? "not bad" :
+    pct >= 63 ? "not bad." :
     pct >= 60 ? "really cutting it close huh?" :
     pct >= 55 ? "sorry to bring you such bad news, but..." :
     pct >= 50 ? "awh, if only you had hit a few more..." :
     pct >= 30 ? "maybe next time..." :
-    pct >= 1 ? "at least you hit one" : "*disappointed stare*";
+    pct >= 1 ? "at least you hit one." : "*disappointed stare*";
   setTimeout(() => { r.style.display = "block"; }, 2000);
   setTimeout(() => {
+    if(missed == false) r.innerHTML += " and <span style='color:yellow'>no miss</span>!";
     // show the score
     s.style.display = "block";
     // slowly add it up...
