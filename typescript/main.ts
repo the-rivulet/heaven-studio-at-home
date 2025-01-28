@@ -98,6 +98,7 @@ function cleanUp(songID: string, maxScore: number) {
     addOne();
   }, 4000);
   setTimeout(() => {
+    rr.style.display = "block";
     rr.textContent = pct >= 100 ? "Perfect!" : pct >= 80 ? "superb" : pct >= 60 ? "ok": "try again :(";
     rr.style.color = pct >= 100 ? "pink" : pct >= 80 ? "red" : pct >= 60 ? "lime": "cyan";
   }, 10000);
