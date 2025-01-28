@@ -90,8 +90,6 @@ function cleanUp(songID, maxScore) {
                                                                 pct >= 1 ? "at least you hit one." : "*disappointed stare*";
     setTimeout(() => { r.style.display = "block"; }, 2000);
     setTimeout(() => {
-        if (missed == false)
-            r.innerHTML += " and <span style='color:yellow'>no miss</span>!";
         // show the score
         s.style.display = "block";
         // slowly add it up...
@@ -99,7 +97,7 @@ function cleanUp(songID, maxScore) {
         let addOne = function () {
             displayedScore++;
             ss.textContent = displayedScore.toString();
-            ss.style.color = displayedScore >= 100 ? "pink" : displayedScore >= 80 ? "red" : displayedScore >= 60 ? "lime" : "cyan";
+            ss.style.color = displayedScore >= 100 ? "magenta" : displayedScore >= 80 ? "red" : displayedScore >= 60 ? "lime" : "cyan";
             if (displayedScore < Math.floor(pct))
                 setTimeout(addOne, 1000 / (Math.floor(pct) - displayedScore));
         };
@@ -107,8 +105,10 @@ function cleanUp(songID, maxScore) {
     }, 4000);
     setTimeout(() => {
         rr.style.display = "block";
-        rr.textContent = pct >= 100 ? "Perfect!" : pct >= 80 ? "superb" : pct >= 60 ? "ok" : "try again :(";
-        rr.style.color = pct >= 100 ? "pink" : pct >= 80 ? "red" : pct >= 60 ? "lime" : "cyan";
+        rr.textContent = pct >= 100 ? "Perfect!" : pct >= 80 ? "superb!" : pct >= 60 ? "ok" : "try again :(";
+        rr.style.color = pct >= 100 ? "magenta" : pct >= 80 ? "red" : pct >= 60 ? "lime" : "cyan";
+        if (missed == false)
+            rr.innerHTML += " <span style='color:yellow'>no miss!</span>";
     }, 10000);
     setTimeout(() => { getId("results-container").style.top = "-100%"; }, 12000);
     // Cleanup
@@ -279,7 +279,7 @@ function playKarateMan() {
         doNothing,
         doNothing,
         d => karateHit(d, 1, d * 8),
-    ], 65, 256, 140, 1310);
+    ], 65, 256, 140, 1320);
 }
 function buttonSetup(id, fn) {
     getId(id + "-button").textContent = "Play " + songNames[id];
