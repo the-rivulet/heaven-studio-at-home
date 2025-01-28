@@ -63,10 +63,51 @@ function cleanUp(songID, maxScore) {
     musicElement.pause();
     musicElement.currentTime = 0;
     getId(songID + "-button").disabled = false;
+    // Scoring!!
     let pct = 100 * score / maxScore;
     if ((pct > bestScores[songID]) || !(bestScores[songID]))
         bestScores[songID] = Math.floor(pct);
     getId("past-results").innerHTML = "Your score was " + Math.floor(pct) + " (" + (pct >= 100 ? "perfect!! :0" : pct >= 80 ? "superb! :D" : pct >= 60 ? "ok" : "try again D:") + ")" + (missed ? "" : ". and you didn't miss at all!") + "<br/>" + getId("past-results").innerHTML;
+    getId("results-container").style.top = "0%";
+    let r = getId("results"), s = getId("scoring"), ss = getId("score"), rr = getId("rank");
+    for (let i of [r, s])
+        i.style.display = "none";
+    r.textContent =
+        pct >= 101 ? "I think I miscalculated something, pretty sure you're not supposed to have " + Math.floor(pct) + " points" :
+            pct >= 100 ? "wow" :
+                pct >= 98 ? "oh, that was so close... you'll get it next time!" :
+                    pct >= 95 ? "go for a perfect next time! I believe in you" :
+                        pct >= 90 ? "woah, very nice!" :
+                            pct >= 80 ? "awesome" :
+                                pct >= 78 ? "oh I wish I could give you a better rank but..." :
+                                    pct >= 77 ? "77 is a lucky number. fortune is smiling upon you" :
+                                        pct >= 70 ? "you made it!" :
+                                            pct >= 63 ? "not bad" :
+                                                pct >= 60 ? "really cutting it close huh?" :
+                                                    pct >= 55 ? "sorry to bring you such bad news, but..." :
+                                                        pct >= 50 ? "awh, if only you had hit a few more..." :
+                                                            pct >= 30 ? "maybe next time..." :
+                                                                pct >= 1 ? "at least you hit one" : "*disappointed stare*";
+    setTimeout(() => { r.style.display = "block"; }, 200);
+    setTimeout(() => {
+        // show the score
+        s.style.display = "block";
+        // slowly add it up...
+        let displayedScore = 0;
+        let addOne = function () {
+            displayedScore++;
+            ss.textContent = displayedScore.toString();
+            ss.style.color = displayedScore >= 100 ? "pink" : displayedScore >= 80 ? "red" : displayedScore >= 60 ? "lime" : "cyan";
+            if (displayedScore < Math.floor(pct))
+                setTimeout(addOne, 1000 / (Math.floor(pct) - displayedScore));
+        };
+        addOne();
+    }, 4000);
+    setTimeout(() => {
+        rr.textContent = pct >= 100 ? "Perfect!" : pct >= 80 ? "superb" : pct >= 60 ? "ok" : "try again :(";
+        rr.style.color = pct >= 100 ? "pink" : pct >= 80 ? "red" : pct >= 60 ? "lime" : "cyan";
+    }, 10000);
+    // Cleanup
     getId("song-container").style.top = "-100%";
     getId(songID + "-button").textContent = "Play " + songNames[songID] + " (Best: " + bestScores[songID] + ")";
     // Hide all the stuff
@@ -180,121 +221,51 @@ function playKarateMan() {
         doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing, doNothing,
         d => karatePunchKick(d),
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
         d => karateHit(d, 0),
         d => karatePunchKick(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 1, d * 3), // this part is a little weird :slugshrug:
-        // this part is a little weird :slugshrug:
-        d => karateHit(d, 1, d * 3),
-        d => karateHit(d, 1, d * 3),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d, 1, d * 3), d => karateHit(d, 1, d * 3), d => karateHit(d, 1, d * 3),
         d => karateHit(d),
         d => karateMultiHit(d, 3), // Hit 3!
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
         d => karateMultiHit(d, 3), // Hit 3!
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
         d => karateMultiHit(d, 3), // Hit 3!
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
+        d => karateHit(d), d => karateHit(d),
         d => karateMultiHit(d, 3), // Hit 3!
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
         doNothing,
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
-        d => karateHit(d),
-        d => karateHit(d),
-        d => karateHit(d, 0),
+        d => karateHit(d), d => karateHit(d), d => karateHit(d, 0),
         d => karatePunchKick(d),
         d => karateHit(d, 0),
         d => karatePunchKick(d),
@@ -304,7 +275,7 @@ function playKarateMan() {
         doNothing,
         doNothing,
         d => karateHit(d, 1, d * 8),
-    ], 65, 256, 140, 1320);
+    ], 65, 256, 140, 1310);
 }
 function buttonSetup(id, fn) {
     getId(id + "-button").textContent = "Play " + songNames[id];

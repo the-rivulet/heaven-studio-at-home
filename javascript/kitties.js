@@ -21,11 +21,7 @@ export function hideKitties() {
 }
 export function kittiesCloseUpClap(delay_1) {
     return __awaiter(this, arguments, void 0, function* (delay, keepKittiesShown = false, extraWait = 0) {
-        hideKitties();
-        // Now show them again
         let tl = getId("topleft"), tr = getId("topright"), b = getId("bottom");
-        tl.style.top = "0%";
-        tl.style.left = "0%";
         // And add the notes...
         for (let i of [10, 12]) {
             noteTimes.push({ time: Date.now() + delay * i + extraWait, key: "k", onHit(good) {
@@ -34,7 +30,8 @@ export function kittiesCloseUpClap(delay_1) {
                         setTimeout(() => { b.src = "assets/nova-bottom-clap2.png"; }, delay);
                 } });
         }
-        yield sleep(delay * 3 + extraWait).then(() => { tr.style.top = "0%"; tr.style.right = "0%"; })
+        yield sleep(extraWait).then(() => { hideKitties(); tl.style.top = "0%"; tl.style.left = "0%"; })
+            .then(() => sleep(delay * 3)).then(() => { tr.style.top = "0%"; tr.style.right = "0%"; })
             .then(() => sleep(delay * 3)).then(() => { b.style.bottom = "0%"; })
             .then(() => sleep(delay * 4)).then(() => {
             tl.src = "assets/nova-topleft-clap1.png";
@@ -63,10 +60,7 @@ export function kittiesCloseUpClap(delay_1) {
 }
 export function kittiesClap(delay_1) {
     return __awaiter(this, arguments, void 0, function* (delay, keepKittiesShown = false, extraWait = 0) {
-        hideKitties();
-        // Now show them again
         let l = getId("left"), m = getId("middle"), r = getId("right");
-        l.style.bottom = "0%";
         // And add the notes...
         for (let i of [10, 12]) {
             noteTimes.push({ time: Date.now() + delay * i + extraWait, key: "k", onHit(good) {
@@ -75,7 +69,8 @@ export function kittiesClap(delay_1) {
                         setTimeout(() => { r.src = "assets/nova-right-clap2.png"; }, delay);
                 } });
         }
-        yield sleep(delay * 3 + extraWait).then(() => { m.style.bottom = "0%"; })
+        yield sleep(extraWait).then(() => { hideKitties(); l.style.bottom = "0%"; })
+            .then(() => sleep(delay * 3)).then(() => { m.style.bottom = "0%"; })
             .then(() => sleep(delay * 3)).then(() => { r.style.bottom = "0%"; })
             .then(() => sleep(delay * 4)).then(() => {
             l.src = "assets/nova-left-clap1.png";

@@ -11,10 +11,7 @@ export function hideKitties() {
 }
 
 export async function kittiesCloseUpClap(delay: number, keepKittiesShown = false, extraWait = 0) {
-  hideKitties();
-  // Now show them again
   let tl = getId<HTMLImageElement>("topleft"), tr = getId<HTMLImageElement>("topright"), b = getId<HTMLImageElement>("bottom");
-  tl.style.top = "0%"; tl.style.left = "0%";
   // And add the notes...
   for(let i of [10, 12]) {
     noteTimes.push({time: Date.now() + delay * i + extraWait, key: "k", onHit(good) {
@@ -22,7 +19,8 @@ export async function kittiesCloseUpClap(delay: number, keepKittiesShown = false
       if(good) setTimeout(() => { b.src = "assets/nova-bottom-clap2.png"; }, delay);
     }});
   }
-  await sleep(delay * 3 + extraWait).then(() => { tr.style.top = "0%"; tr.style.right = "0%"; })
+  await sleep(extraWait).then(() => { hideKitties(); tl.style.top = "0%"; tl.style.left = "0%"; })
+  .then(() => sleep(delay * 3)).then(() => { tr.style.top = "0%"; tr.style.right = "0%"; })
   .then(() => sleep(delay * 3)).then(() => { b.style.bottom = "0%"; })
   .then(() => sleep(delay * 4)).then(() => {
     tl.src = "assets/nova-topleft-clap1.png";
@@ -49,10 +47,7 @@ export async function kittiesCloseUpClap(delay: number, keepKittiesShown = false
 }
 
 export async function kittiesClap(delay: number, keepKittiesShown = false, extraWait = 0) {
-  hideKitties();
-  // Now show them again
   let l = getId<HTMLImageElement>("left"), m = getId<HTMLImageElement>("middle"), r = getId<HTMLImageElement>("right");
-  l.style.bottom = "0%";
   // And add the notes...
   for(let i of [10, 12]) {
     noteTimes.push({time: Date.now() + delay * i + extraWait, key: "k", onHit(good) {
@@ -60,7 +55,8 @@ export async function kittiesClap(delay: number, keepKittiesShown = false, extra
       if(good) setTimeout(() => { r.src = "assets/nova-right-clap2.png"; }, delay);
     }});
   }
-  await sleep(delay * 3 + extraWait).then(() => { m.style.bottom = "0%"; })
+  await sleep(extraWait).then(() => { hideKitties(); l.style.bottom = "0%"; })
+  .then(() => sleep(delay * 3)).then(() => { m.style.bottom = "0%"; })
   .then(() => sleep(delay * 3)).then(() => { r.style.bottom = "0%"; })
   .then(() => sleep(delay * 4)).then(() => {
     l.src = "assets/nova-left-clap1.png";
