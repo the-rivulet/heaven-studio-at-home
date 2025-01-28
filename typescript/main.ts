@@ -83,7 +83,7 @@ function cleanUp(songID: string, maxScore: number) {
     pct >= 50 ? "awh, if only you had hit a few more..." :
     pct >= 30 ? "maybe next time..." :
     pct >= 1 ? "at least you hit one" : "*disappointed stare*";
-  setTimeout(() => { r.style.display = "block"; }, 200);
+  setTimeout(() => { r.style.display = "block"; }, 2000);
   setTimeout(() => {
     // show the score
     s.style.display = "block";
@@ -100,6 +100,7 @@ function cleanUp(songID: string, maxScore: number) {
     rr.textContent = pct >= 100 ? "Perfect!" : pct >= 80 ? "superb" : pct >= 60 ? "ok": "try again :(";
     rr.style.color = pct >= 100 ? "pink" : pct >= 80 ? "red" : pct >= 60 ? "lime": "cyan";
   }, 10000);
+  setTimeout(() => { getId("results-container").style.top = "-100%"; }, 12000);
   // Cleanup
   getId("song-container").style.top = "-100%";
   getId(songID + "-button").textContent = "Play " + songNames[songID] + " (Best: " + bestScores[songID] + ")";
